@@ -80,7 +80,7 @@ gcloud compute addresses create demo-iap-ip \
 export DOMAIN=$(gcloud compute addresses list --filter demo-iap-ip --format='value(ADDRESS)').nip.io    
 
 echo $DOMAIN
-# 34.95.125.93.nip.io
+# 34.128.181.180.nip.io
 # https://nip.io/
 
 
@@ -177,8 +177,6 @@ gcloud compute ssl-certificates list --format='value(MANAGED_STATUS)'
 
 # Get service URL
 echo https://$DOMAIN
-
-
 # https://34.95.125.93.nip.io
 
 
