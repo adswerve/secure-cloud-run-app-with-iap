@@ -80,7 +80,7 @@ gcloud compute addresses create demo-iap-ip \
 export DOMAIN=$(gcloud compute addresses list --filter demo-iap-ip --format='value(ADDRESS)').nip.io    
 
 echo $DOMAIN
-# 34.128.181.180.nip.io
+# 34.95.125.93.nip.io
 # https://nip.io/
 
 
@@ -171,15 +171,16 @@ gcloud iap web enable --resource-type=backend-services \
     --oauth2-client-secret=$CLIENT_SECRET \
     --service=demo-iap-backend
 # WARNING: IAP has been enabled for a backend service that does not use HTTPS. Data sent from the Load Balancer to your VM will not be encrypted.
+# WARNING: IAP only protects requests that go through the Cloud Load Balancer. See the IAP documentation for important security best practices: https://cloud.google.com/iap/.
 
 # Verify the SSL certificate is ACTIVE
 gcloud compute ssl-certificates list --format='value(MANAGED_STATUS)'    
 # Note: Wait for the status to show as ACTIVE before moving forward. This process can take up to 60 minutes.
-# In my testing, it took about 30 mins
+# In my testing, it took about 7-30 mins
 
 # Get service URL
 echo https://$DOMAIN
-# https://34.128.181.180.nip.io
+# https://34.95.125.93.nip.io
 
 
 # Add an IAM policy binding for the role of 'roles/iap.httpsResourceAccessor' for the user created in the previous step

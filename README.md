@@ -4,9 +4,10 @@
 Secure a Cloud Run application with IAP.
 
 ## Value
-Identity management for a Cloud Run app is:
-- Simple to use
+This solution provides Identity management for a Cloud Run app, whhich is:
+- Safe
 - Secure
+- Simple to use
 - Centralized
 - Cost-efficient
 
