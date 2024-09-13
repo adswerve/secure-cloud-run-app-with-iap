@@ -5,16 +5,41 @@ export PROJECT_ID=adswerve-bigquery-training
 export REGION=us-central1
 export CLOUD_RUN_SERVICE=cloud-run-service
 
-# Delete IAP OAuth client
-CLIENT_NAME=$(gcloud alpha iap oauth-clients list projects/$PROJECT_ID/brands/$PROJECT_NUMBER --format='value(name)' --filter="displayName:iap-demo")
-# ERROR: (gcloud.alpha.iap.oauth-clients.list) INVALID_ARGUMENT: Unable to parse project number and brand. Use following format: projects/{ProjectNumber|ProjectId}/brands/{brand}
 
-echo $CLIENT_NAME
+# Function to delete OAuth clients
+delete_oauth_clients() {
+    # Get the list of OAuth clients
+    clients=$(gcloud alpha iap oauth-clients list projects/$PROJECT_NUMBER/brands/$PROJECT_NUMBER --format='value(name)')
 
-gcloud alpha iap oauth-clients delete $CLIENT_NAME
+    # Check if there are any clients
+    if [ -z "$clients" ]; then
+        echo "No OAuth clients found."
+    else
+        # Iterate through the clients and delete them
+        while IFS= read -r client; do
+            echo "Deleting OAuth client: $client"
+            gcloud alpha iap oauth-clients delete "$client" --quiet
+        done <<< "$clients"
+    fi
+}
+
+# Delete OAuth clients
+echo "Deleting OAuth clients..."
+delete_oauth_clients
 
 # Delete IAP OAuth brand
-gcloud alpha iap oauth-brands delete projects/$PROJECT_ID/brands/$PROJECT_NUMBER
+# gcloud alpha iap oauth-brands delete projects/$PROJECT_ID/brands/$PROJECT_NUMBER
+# ERROR: (gcloud.alpha.iap.oauth-brands) Invalid choice: 'delete'.
+# Maybe you meant:
+#   gcloud projects delete
+#   gcloud iap oauth-brands create
+#   gcloud iap oauth-brands describe
+#   gcloud iap oauth-brands list
+#   gcloud projects remove-iam-policy-binding
+#   gcloud alpha projects search
+#   gcloud iap oauth-clients delete
+#   gcloud iap web remove-iam-policy-binding
+
 
 # Delete forwarding rule
 gcloud compute forwarding-rules delete demo-iap-forwarding-rule --global --quiet
@@ -38,7 +63,12 @@ gcloud compute backend-services delete demo-iap-backend --global --quiet
 gcloud compute network-endpoint-groups delete demo-iap-neg --region=$REGION --quiet
 
 # Delete Cloud Run service
-gcloud run services delete $CLOUD_RUN_SERVICE --region=$REGION --quiet
+# gcloud run services delete $CLOUD_RUN_SERVICE --region=$REGION --quiet
+
+# open the Cloud Run service URL
+gcloud run services update $CLOUD_RUN_SERVICE \
+    --ingress all \
+    --region $REGION
 
 # Disable services
 gcloud services disable \
