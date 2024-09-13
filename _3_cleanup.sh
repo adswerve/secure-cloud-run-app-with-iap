@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# limitation: we are not deleting OAuth consent screen app. Change it back to INTERNAL manually (optional)
+
 # Set environment variables
 export PROJECT_ID=adswerve-bigquery-training
 export REGION=us-central1
