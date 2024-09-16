@@ -18,7 +18,6 @@ echo "PROJECT_NUMBER: $PROJECT_NUMBER"
 echo "REGION: $REGION"
 echo "CLOUD_RUN_SERVICE: $CLOUD_RUN_SERVICE"
 
-
 gcloud auth application-default login
 gcloud config configurations activate $GCLOUD_CONFIGURATION
 gcloud auth application-default set-quota-project $PROJECT_ID
