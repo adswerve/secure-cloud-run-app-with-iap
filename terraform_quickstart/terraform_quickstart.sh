@@ -15,6 +15,8 @@ brew upgrade hashicorp/tap/terraform
 
 terraform -help
 
+cd terraform_quickstart
+
 
 terraform init
 
