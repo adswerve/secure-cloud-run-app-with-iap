@@ -2,7 +2,7 @@
 # Purpose: To deploy the App to Cloud Run.
 
 # Google Cloud Project ID
-PROJECT=adswerve-bigquery-training
+PROJECT=as-dev-ga4-flattener-320623
 
 # Google Cloud Region
 LOCATION=us-central1
