@@ -24,8 +24,11 @@ variable "cloud_run_service" {
   default = "cloud-run-service"
 }
 
-variable "user_email" {}
+variable "user_email" {
+    default = "ruslan.bergenov@adswerve.com"
+}
 
+/*
 # Enable required APIs
 resource "google_project_service" "enable_apis" {
   for_each = toset([
@@ -93,13 +96,34 @@ resource "google_compute_global_forwarding_rule" "forwarding_rule" {
   ip_address = google_compute_global_address.static_ip.address
 }
 
+*/
+
 # Update Cloud Run Service Ingress
-resource "google_cloud_run_service_iam_member" "noauth" {
+resource "google_cloud_run_service" "default" {
+  name     = "cloud-run-service"
   location = var.region
-  service  = var.cloud_run_service
-  role     = "roles/run.invoker"
-  member   = "allUsers"
+  project  = var.project_id
+
+  template {
+    spec {
+      containers {
+        image = "gcr.io/cloudrun/hello"  # Replace with your actual container image
+      }
+    }
+  }
+
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
+
+  metadata {
+    annotations = {
+      "run.googleapis.com/ingress" = "internal-and-cloud-load-balancing"
+    }
+  }
 }
+
 
 # # Create IAP OAuth Brand
 # resource "google_iap_brand" "project_brand" {
