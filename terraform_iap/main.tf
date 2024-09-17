@@ -28,7 +28,6 @@ variable "user_email" {
     default = "ruslan.bergenov@adswerve.com"
 }
 
-/*
 # Enable required APIs
 resource "google_project_service" "enable_apis" {
   for_each = toset([
@@ -96,46 +95,43 @@ resource "google_compute_global_forwarding_rule" "forwarding_rule" {
   ip_address = google_compute_global_address.static_ip.address
 }
 
-*/
 
-# Update Cloud Run Service Ingress
-resource "google_cloud_run_service" "default" {
-  name     = "cloud-run-service"
-  location = var.region
-  project  = var.project_id
 
-  template {
-    spec {
-      containers {
-        image = "gcr.io/cloudrun/hello"  # Replace with your actual container image
-      }
-    }
-  }
+# Update Cloud Run Service Ingress 
+# do this manually as Cloud Run isn't managed by Terraform
+# resource "google_cloud_run_service" "default" {
+#   name     = "cloud-run-service"
+#   location = var.region
+#   project  = var.project_id
 
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
+#   template {
+#     spec {
+#       containers {
+#         image = "us-central1-docker.pkg.dev/as-dev-ga4-flattener-320623/cloud-run-source-deploy/cloud-run-service"  # Replace with the actual image being used
+#       }
+#     }
+#   }
 
-  metadata {
-    annotations = {
-      "run.googleapis.com/ingress" = "internal-and-cloud-load-balancing"
-    }
-  }
-}
+#   metadata {
+#     annotations = {
+#       "run.googleapis.com/ingress" = "internal-and-cloud-load-balancing"
+#     }
+#   }
+#   # Other configurations...
+# }
 
 
 # # Create IAP OAuth Brand
-# resource "google_iap_brand" "project_brand" {
-#   support_email     = var.user_email
-#   application_title = "demo"
-# }
+resource "google_iap_brand" "project_brand" {
+  support_email     = var.user_email
+  application_title = "demo"
+}
 
 # # Create IAP OAuth Client
-# resource "google_iap_client" "project_client" {
-#   display_name = "iap-demo"
-#   brand        = google_iap_brand.project_brand.name
-# }
+resource "google_iap_client" "project_client" {
+  display_name = "iap-demo"
+  brand        = google_iap_brand.project_brand.name
+}
 
 # # Enable IAP on Backend Service
 # resource "google_iap_web_backend_service_iam_member" "member" {
