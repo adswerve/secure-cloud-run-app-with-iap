@@ -44,6 +44,7 @@ ls -a
 
 terraform init
 
+# Cloud Run is not managed by Terraform, having a hard time adding it
 # terraform import google_cloud_run_service.default projects/as-dev-ga4-flattener-320623/locations/us-central1/services/cloud-run-service
 #  Error: Cannot import non-existent remote object
 
@@ -52,7 +53,6 @@ terraform plan
 terraform apply
 
 terraform destroy
-
 
 ############################################################################################
 # PART 4: ENABLING CLOUD IDENTITY-AWARE PROXY (IAP) ON THE LOAD BALANCER
@@ -137,6 +137,7 @@ echo https://$ip.nip.io
 gcloud compute ssl-certificates list --format='value(MANAGED_STATUS)'    
 # Note: Wait for the status to show as ACTIVE before moving forward. This process can take up to 60 minutes.
 # In my testing, it took about 7-30 mins
+# https://console.cloud.google.com/net-services/loadbalancing/advanced/sslCertificates/details/demo-iap-cert?q=search&referrer=search&project=as-dev-ga4-flattener-320623
 
 # Add an IAM policy binding for the role of 'roles/iap.httpsResourceAccessor' for the user created in the previous step
 
@@ -148,9 +149,16 @@ gcloud iap web add-iam-policy-binding \
 
 # Note: It takes 5-7 minutes for the changes to take effect. If you are presented with the sign in prompt wait and retry.
 
+# if you get this error
 # The IAP service account is not provisioned. Please follow the instructions to create service account and rectify IAP and Cloud Run setup: https://cloud.google.com/iap/docs/enabling-cloud-run
-
+# then try this
 gcloud beta services identity create --service=iap.googleapis.com --project=$PROJECT_ID
+
+# if you get this error: 
+# This site can’t provide a secure connection
+# 34.117.32.167.nip.io uses an unsupported protocol.
+# then wait a couple of mins
+
 
 export USER_EMAIL=teamap@adswerve.com
 
@@ -168,5 +176,35 @@ gcloud iap web add-iam-policy-binding \
 
 
 
+############################################################################################
+# PART 6: CLEANUP
+############################################################################################
 
 
+terraform destroy
+
+# Function to delete OAuth clients
+delete_oauth_clients() {
+    # Get the list of OAuth clients
+    clients=$(gcloud alpha iap oauth-clients list projects/$PROJECT_NUMBER/brands/$PROJECT_NUMBER --format='value(name)')
+
+    # Check if there are any clients
+    if [ -z "$clients" ]; then
+        echo "No OAuth clients found."
+    else
+        # Iterate through the clients and delete them
+        while IFS= read -r client; do
+            echo "Deleting OAuth client: $client"
+            gcloud alpha iap oauth-clients delete "$client" --quiet
+        done <<< "$clients"
+    fi
+}
+
+# Delete OAuth clients
+echo "Deleting OAuth clients..."
+delete_oauth_clients
+
+
+gcloud run services update $CLOUD_RUN_SERVICE \
+    --ingress all \
+    --region $REGION
