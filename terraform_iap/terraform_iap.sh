@@ -208,3 +208,8 @@ delete_oauth_clients
 gcloud run services update $CLOUD_RUN_SERVICE \
     --ingress all \
     --region $REGION
+
+
+# OAuth consent screen
+# make sure it says "internal"
+# https://console.cloud.google.com/apis/credentials/consent?referrer=search&project=as-dev-ga4-flattener-320623
