@@ -122,16 +122,16 @@ resource "google_compute_global_forwarding_rule" "forwarding_rule" {
 
 
 # # Create IAP OAuth Brand
-resource "google_iap_brand" "project_brand" {
-  support_email     = var.user_email
-  application_title = "demo"
-}
+# resource "google_iap_brand" "project_brand" {
+#   support_email     = var.user_email
+#   application_title = "demo"
+# }
 
-# # Create IAP OAuth Client
-resource "google_iap_client" "project_client" {
-  display_name = "iap-demo"
-  brand        = google_iap_brand.project_brand.name
-}
+# # # Create IAP OAuth Client
+# resource "google_iap_client" "project_client" {
+#   display_name = "iap-demo"
+#   brand        = google_iap_brand.project_brand.name
+# }
 
 # # Enable IAP on Backend Service
 # resource "google_iap_web_backend_service_iam_member" "member" {
