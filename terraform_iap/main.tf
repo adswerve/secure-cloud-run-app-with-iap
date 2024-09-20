@@ -13,7 +13,7 @@ provider "google" {
 }
 
 variable "project_id" {
-  default = "as-dev-ga4-flattener-320623"
+  default = "adswerve-bigquery-training"
 }
 
 variable "region" {
@@ -107,7 +107,7 @@ resource "google_compute_global_forwarding_rule" "forwarding_rule" {
 #   template {
 #     spec {
 #       containers {
-#         image = "us-central1-docker.pkg.dev/as-dev-ga4-flattener-320623/cloud-run-source-deploy/cloud-run-service"  # Replace with the actual image being used
+#         image = "us-central1-docker.pkg.dev/adswerve-bigquery-training/cloud-run-source-deploy/cloud-run-service"  # Replace with the actual image being used
 #       }
 #     }
 #   }

@@ -15,10 +15,8 @@ gcloud auth application-default login
 
 gcloud config configurations list 
 
-gcloud config configurations activate 
-
-export PROJECT_ID=as-dev-ga4-flattener-320623
-export GCLOUD_CONFIGURATION=as-dev-ga4-flattener
+export PROJECT_ID=adswerve-bigquery-training
+export GCLOUD_CONFIGURATION=adswerve-bigquery-training
 
 echo "PROJECT_ID: $PROJECT_ID"
 echo "GCLOUD_CONFIGURATION: $GCLOUD_CONFIGURATION"

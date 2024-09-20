@@ -4,9 +4,23 @@
 
 # Set environment variables
 export PROJECT_ID=adswerve-bigquery-training
+export GCLOUD_CONFIGURATION=adswerve-bigquery-training
+
+gcloud config configurations activate $GCLOUD_CONFIGURATION
+gcloud auth application-default set-quota-project $PROJECT_ID
+
+export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
 export REGION=us-central1
 export CLOUD_RUN_SERVICE=cloud-run-service
 
+# Log the values of the environment variables
+echo "PROJECT_ID: $PROJECT_ID"
+echo "GCLOUD_CONFIGURATION: $GCLOUD_CONFIGURATION"
+echo "PROJECT_NUMBER: $PROJECT_NUMBER"
+echo "REGION: $REGION"
+echo "CLOUD_RUN_SERVICE: $CLOUD_RUN_SERVICE"
+
+gcloud config configurations list
 
 # Function to delete OAuth clients
 delete_oauth_clients() {

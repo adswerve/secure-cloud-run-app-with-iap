@@ -1,20 +1,20 @@
+#PURPOSE: secure a Cloud Run app with IAP
+# Source: https://codelabs.developers.google.com/secure-serverless-application-with-identity-aware-proxy
 
 ############################################################################################
 # PART 1: SET UP
 ############################################################################################
 gcloud auth application-default login
 
-export GCLOUD_CONFIGURATION=as-dev-ga4-flattener
-export PROJECT_ID=as-dev-ga4-flattener-320623
+export GCLOUD_CONFIGURATION=adswerve-bigquery-training
+export PROJECT_ID=adswerve-bigquery-training
+export REGION=us-central1
+export CLOUD_RUN_SERVICE=cloud-run-service
 
 gcloud config configurations activate $GCLOUD_CONFIGURATION
 gcloud auth application-default set-quota-project $PROJECT_ID
 
-
 export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
-export REGION=us-central1
-export CLOUD_RUN_SERVICE=cloud-run-service
-
 
 # Log the values of the environment variables
 echo "PROJECT_ID: $PROJECT_ID"
@@ -45,7 +45,7 @@ ls -a
 terraform init
 
 # Cloud Run is not managed by Terraform, having a hard time adding it
-# terraform import google_cloud_run_service.default projects/as-dev-ga4-flattener-320623/locations/us-central1/services/cloud-run-service
+# terraform import google_cloud_run_service.default projects/adswerve-bigquery-training/locations/us-central1/services/cloud-run-service
 #  Error: Cannot import non-existent remote object
 
 terraform plan
@@ -93,11 +93,11 @@ echo $CLIENT_SECRET
 
 
 # IAP screen gives this message: Use external identities for authorization
-# https://console.cloud.google.com/security/iap?tab=applications&project=as-dev-ga4-flattener-320623
+# https://console.cloud.google.com/security/iap?tab=applications&project=adswerve-bigquery-training
 # Navigate to the OAuth consent screen in the Cloud Console
 # Click MAKE EXTERNAL under User Type
 # Select Testing as the Publishing status
-# https://console.cloud.google.com/apis/credentials/consent?authuser=0&project=as-dev-ga4-flattener-320623
+# https://console.cloud.google.com/apis/credentials/consent?authuser=0&project=adswerve-bigquery-training
 
 ############################################################################################
 # PART 5: RESTRICTING ACCESS WITH IAP
@@ -132,12 +132,13 @@ echo "The IP address for 'demo-iap-ip' is: $ip"
 
 # Get service URL
 echo https://$ip.nip.io
+# https://34.117.116.251.nip.io
 
 # Verify the SSL certificate is ACTIVE
 gcloud compute ssl-certificates list --format='value(MANAGED_STATUS)'    
 # Note: Wait for the status to show as ACTIVE before moving forward. This process can take up to 60 minutes.
 # In my testing, it took about 7-30 mins
-# https://console.cloud.google.com/net-services/loadbalancing/advanced/sslCertificates/details/demo-iap-cert?q=search&referrer=search&project=as-dev-ga4-flattener-320623
+# https://console.cloud.google.com/net-services/loadbalancing/advanced/sslCertificates/details/demo-iap-cert?q=search&referrer=search&project=adswerve-bigquery-training
 
 # Add an IAM policy binding for the role of 'roles/iap.httpsResourceAccessor' for the user created in the previous step
 
@@ -170,10 +171,14 @@ gcloud iap web add-iam-policy-binding \
     --member=user:$USER_EMAIL \
     --role='roles/iap.httpsResourceAccessor'
 
-# https://console.cloud.google.com/security/iap?referrer=search&project=as-dev-ga4-flattener-320623
+# https://console.cloud.google.com/security/iap?referrer=search&project=adswerve-bigquery-training
 
 
-
+gcloud iap web add-iam-policy-binding \
+    --resource-type=backend-services \
+    --service=demo-iap-backend \
+    --member=user:robert.krasevec@adswerve.com \
+    --role='roles/iap.httpsResourceAccessor'
 
 
 ############################################################################################
@@ -212,4 +217,4 @@ gcloud run services update $CLOUD_RUN_SERVICE \
 
 # OAuth consent screen
 # make sure it says "internal"
-# https://console.cloud.google.com/apis/credentials/consent?referrer=search&project=as-dev-ga4-flattener-320623
+# https://console.cloud.google.com/apis/credentials/consent?referrer=search&project=adswerve-bigquery-training
