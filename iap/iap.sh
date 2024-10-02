@@ -4,6 +4,7 @@
 ############################################################################################
 # PART 1: SET UP
 ############################################################################################
+
 gcloud auth application-default login
 
 export GCLOUD_CONFIGURATION=adswerve-bigquery-training
@@ -38,7 +39,11 @@ gcloud run services update $CLOUD_RUN_SERVICE \
 # PART 3: deploy the solution components
 ############################################################################################
 
-cd terraform_iap
+# make sure you are in the iap directory
+
+cd ..
+
+cd iap
 
 ls -a
 

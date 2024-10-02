@@ -2,14 +2,18 @@
 python3 -m venv .venv
 source .venv/bin/activate
 
+cd cloud_run_app
+
+ls -a
+
 # Install the application requirements
-pip install -r cloud_run_app/requirements.txt
+pip install -r requirements.txt
 
 # Run the application
-streamlit run cloud_run_app/streamlit_app.py --server.port 8080
+streamlit run streamlit_app.py --server.port 8080
 
 # deploy to GCP
-chmod +x cloud_run_app/deploy.sh
+chmod +x deploy.sh
 
 gcloud auth application-default login
 
@@ -29,6 +33,6 @@ gcloud config configurations list
 # optional - skip it if not needed
 gcloud init
 
-./cloud_run_app/deploy.sh
+./deploy.sh
 
 
