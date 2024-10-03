@@ -38,7 +38,7 @@ Developers and cloud architects looking to implement secure access controls for 
 ├── proxy_demo/
 │   └── proxy.sh          # Shell script setting up a proxy instead of IAP (optional)
 ├── tools/
-│   └── cleanup.sh        # Shell script full gcloud cli cleanup (optional). It's recommended to cleanup using the terraform iap.sh script instead
+│   └── cleanup.sh        # Shell script full gcloud cli cleanup (optional). It's recommended to cleanup using the terraform iap.sh script instead.
 └── README.md
 ```
 
@@ -94,6 +94,33 @@ Option B:
 
 Run the commands in the `tools/cleanup.sh` file
 
+## Quick Proxy Solution for Cloud Run
+
+While not as secure or centralized as IAP, a quick alternative is to set up a proxy for your Cloud Run service.
+
+### Setup Instructions
+
+1. Navigate to the `proxy_demo` directory.
+2. Open the `proxy.sh` file.
+3. Execute the commands in `proxy.sh` sequentially.
+
+### Considerations
+
+- **Pros**: 
+  - Faster to implement
+  - Simpler configuration
+- **Cons**:
+  - Less secure than IAP
+  - Lacks centralized management
+  - May not be suitable for production environments
+
+### When to Use
+
+- For rapid prototyping
+- In development environments
+- When full IAP setup is not immediately feasible
+
+**Note**: For production deployments, it's strongly recommended to use the full IAP solution described in the main setup instructions.
 ## Sources / credits for the code in this repo
 
 ### IAP
