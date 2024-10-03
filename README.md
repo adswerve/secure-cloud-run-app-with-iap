@@ -22,7 +22,7 @@ Developers and cloud architects looking to implement secure access controls for 
 
 - Google Cloud Platform (GCP) account with billing enabled
 - `gcloud` CLI installed and configured
-- Terraform installed
+- Terraform installed. Please see the commmands in the `iap.sh` file which install Terraform. 
 - Owner role or necessary permissions in the GCP project
 
 ## Project Structure
@@ -139,6 +139,11 @@ While not as secure or centralized as IAP, a quick alternative is to set up a pr
 - [Cloud Run Deployment Guide](https://cloud.google.com/run/docs/quickstarts/build-and-deploy/deploy-python-service)
 - [Google Cloud Run Quickstart](https://cloud.google.com/run/docs/quickstarts/build-and-deploy/deploy-python-service)
 - [gcloud run deploy Reference](https://cloud.google.com/sdk/gcloud/reference/run/deploy)
+
+### Terraform
+- [Install Terraform](https://developer.hashicorp.com/terraform/tutorials/gcp-get-started/install-cli?in=terraform%2Fgcp-get-started)
+- [Terraform GCP Quickstart](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started)
+
 
 ## Permissions
 

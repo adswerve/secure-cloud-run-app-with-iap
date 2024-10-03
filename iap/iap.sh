@@ -47,6 +47,17 @@ cd iap
 
 ls -a
 
+# install Terraform if needed
+
+# https://developer.hashicorp.com/terraform/tutorials/gcp-get-started/install-cli?in=terraform%2Fgcp-get-started
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
+brew update
+brew upgrade hashicorp/tap/terraform
+terraform -help
+
+# deploy the solution components
+
 terraform init
 
 # Cloud Run is not managed by Terraform, having a hard time adding it
