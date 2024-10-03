@@ -44,6 +44,15 @@ Developers and cloud architects looking to implement secure access controls for 
 
 ## Setup Instructions
 
+### 0. Clone the repo
+
+```
+git clone https://github.com/adswerve/secure-cloud-run-app-with-iap
+
+cd secure-cloud-run-app-with-iap
+```
+
+
 ### 1. Deploying a Test Cloud Run Application (Optional)
 
 If you don't have an existing Cloud Run app:
