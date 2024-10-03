@@ -147,6 +147,8 @@ gcloud compute ssl-certificates list --format='value(MANAGED_STATUS)'
 
 # Add an IAM policy binding for the role of 'roles/iap.httpsResourceAccessor' for the user created in the previous step
 
+echo $USER_EMAIL
+
 gcloud iap web add-iam-policy-binding \
     --resource-type=backend-services \
     --service=demo-iap-backend \
@@ -187,7 +189,7 @@ gcloud iap web add-iam-policy-binding \
 
 
 ############################################################################################
-# PART 6: CLEANUP
+# PART 6: (OPTIONAL) CLEANUP
 ############################################################################################
 
 
