@@ -73,7 +73,11 @@ If you don't have an existing Cloud Run app:
    export REGION=your-preferred-region
    export CLOUD_RUN_SERVICE=your-cloud-run-service-name
    ```
-4. Execute the commands in `iap.sh` sequentially, following any manual steps as indicated in the comments.
+4. Execute the commands in `iap.sh` sequentially, following any manual steps as indicated in the comments. 
+- Only execute steps 1 - 5. Ignore step 6 "Cleanup" as it's optional. It's only needed if you need to remove all the resources you set up from your GCP project.
+- Unfortunately, you can't run the whole `iap.sh` file in one go for a few reasons
+  - Some steps are manual: some steps requiring OAuth Consent Screen are manual. We need to set it to INTERNAL and then to EXTERNAL - Testing.
+  - After we request an SSL certificate, we need to wait for a few minutes (up to an hour) until it's active before proceeding. 
 
 ## Important Notes
 
@@ -81,6 +85,40 @@ If you don't have an existing Cloud Run app:
 - Most of infrastructure deployment has been Terraformed. However, there are some steps which would require you to run some gcloud shell commmands. 
 - The SSL certificate provisioning can take up to 60 minutes. Be patient during this step.
 - After making changes to IAP permissions, it may take 5-7 minutes for them to take effect.
+
+## How to get your Cloud Run service URL
+
+- See step 4 in the `iap.sh` file, specifically, this part:
+```
+echo https://$ip.nip.io
+```
+
+- You can also obtain this URL in GCP console / UI
+  - Search "IP Address" in GCP console, in the search field
+  - Find the IP address you reserved
+  - append .nip.io to your ip address
+  
+- Example: `https://34.117.116.251.nip.io`
+
+## How to share your Cloud Run app with a user
+
+- See step 4 in the `iap.sh` file, specifically, this part:
+```
+export USER_EMAIL=firstname.lastname@domain.com
+
+echo $USER_EMAIL
+
+gcloud iap web add-iam-policy-binding \
+    --resource-type=backend-services \
+    --service=demo-iap-backend \
+    --member=user:$USER_EMAIL \
+    --role='roles/iap.httpsResourceAccessor'
+```
+- You can also share in GCP console / UI
+  - Go to this URL: https://console.cloud.google.com/security/iap?referrer=search&project={insert-your-project-id}
+  - Click a checkbox next to "demo-iap-backend"
+  - Click "Add prinipal"
+  - Add them a role "IAP-secured Web App User"
 
 ## Troubleshooting
 

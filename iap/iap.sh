@@ -26,7 +26,6 @@ echo "CLOUD_RUN_SERVICE: $CLOUD_RUN_SERVICE"
 
 gcloud config configurations list
 
-
 ############################################################################################
 # PART 2: upate the Cloud Run service
 ############################################################################################
@@ -68,7 +67,6 @@ terraform plan
 
 terraform apply
 
-terraform destroy
 
 ############################################################################################
 # PART 4: ENABLING CLOUD IDENTITY-AWARE PROXY (IAP) ON THE LOAD BALANCER
@@ -80,12 +78,16 @@ export USER_EMAIL=$(gcloud config list account --format "value(core.account)")
 echo $USER_EMAIL
 
 # create an OAuth consent screen 
-# gcloud alpha iap oauth-brands create \
-#     --application_title="demo" \
-#     --support_email=$USER_EMAIL
-# ERROR: (gcloud.alpha.iap.oauth-brands.create) Resource in projects [adswerve-ts-team-sandbox] is the subject of a conflict: Requested entity already exists
+gcloud alpha iap oauth-brands create \
+    --application_title="demo" \
+    --support_email=$USER_EMAIL
+# if you get this error, then it's okay, it already exists
+# ERROR: (gcloud.alpha.iap.oauth-brands.create) Resource in projects [project] is the subject of a conflict: Requested entity already exists
 
 gcloud alpha iap oauth-brands list    
+
+# ATTENTION: MANUAL STEP
+# In GCP console, go to Oath Consent. Change application type Internal
 
 # Create an IAP OAuth Client
 # FAILED_PRECONDITION: Brand's Application type must be set to Internal.
@@ -109,10 +111,15 @@ echo $CLIENT_SECRET
 
 
 # IAP screen gives this message: Use external identities for authorization
+# NOTE: there are GCP URLs in this file. Their purpose is to show you where the resources you created are. Put your GCP project id after "&project=". 
+# You can do find and replace across the whole file.
 # https://console.cloud.google.com/security/iap?tab=applications&project=adswerve-bigquery-training
+
+# ATTENTION: MANUAL STEP
 # Navigate to the OAuth consent screen in the Cloud Console
 # Click MAKE EXTERNAL under User Type
 # Select Testing as the Publishing status
+
 # https://console.cloud.google.com/apis/credentials/consent?authuser=0&project=adswerve-bigquery-training
 
 ############################################################################################
@@ -127,8 +134,6 @@ gcloud iap web enable --resource-type=backend-services \
     --service=demo-iap-backend
 # WARNING: IAP has been enabled for a backend service that does not use HTTPS. Data sent from the Load Balancer to your VM will not be encrypted.
 # WARNING: IAP only protects requests that go through the Cloud Load Balancer. See the IAP documentation for important security best practices: https://cloud.google.com/iap/.
-
-
 
 
 # List all reserved IP addresses and filter for the one named "demo-iap-ip"
@@ -147,13 +152,20 @@ ip=$ip_info
 echo "The IP address for 'demo-iap-ip' is: $ip"
 
 # Get service URL
+# This will be the URL for your Clud Run service
 echo https://$ip.nip.io
+# Example
 # https://34.117.116.251.nip.io
+# You can also obtain this URL manually
+    # Search "IP Address" in GCP console, in the search field
+    # Find the IP address you reserved
+    # append .nip.io to your ip address
 
 # Verify the SSL certificate is ACTIVE
 gcloud compute ssl-certificates list --format='value(MANAGED_STATUS)'    
 # Note: Wait for the status to show as ACTIVE before moving forward. This process can take up to 60 minutes.
 # In my testing, it took about 7-30 mins
+# You can also verify that it's active in GCP UI:
 # https://console.cloud.google.com/net-services/loadbalancing/advanced/sslCertificates/details/demo-iap-cert?q=search&referrer=search&project=adswerve-bigquery-training
 
 # Add an IAM policy binding for the role of 'roles/iap.httpsResourceAccessor' for the user created in the previous step
@@ -189,20 +201,27 @@ gcloud iap web add-iam-policy-binding \
     --member=user:$USER_EMAIL \
     --role='roles/iap.httpsResourceAccessor'
 
+# You can add user manually here:
 # https://console.cloud.google.com/security/iap?referrer=search&project=adswerve-bigquery-training
+# Click a checkbox next to "demo-iap-backend". 
+# Click "Add prinipal"
+# Add them a role "IAP-secured Web App User"
 
+## add another user
+
+export USER_EMAIL=firstname.lastname@domain.com
+
+echo $USER_EMAIL
 
 gcloud iap web add-iam-policy-binding \
     --resource-type=backend-services \
     --service=demo-iap-backend \
-    --member=user:robert.krasevec@adswerve.com \
+    --member=user:$USER_EMAIL \
     --role='roles/iap.httpsResourceAccessor'
-
 
 ############################################################################################
 # PART 6: (OPTIONAL) CLEANUP
 ############################################################################################
-
 
 terraform destroy
 
